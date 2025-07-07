@@ -1,0 +1,12 @@
+[package]
+name = "study-soft-render"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.98"
+glam = "0.30.4"
+softbuffer = "0.4.6"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+winit = "0.30.11"
