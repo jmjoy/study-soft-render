@@ -2,9 +2,11 @@
 name = "study-soft-render"
 version = "0.1.0"
 edition = "2024"
+license = "Unlicense"
 
 [dependencies]
 anyhow = "1.0.98"
+fastrand = "2.0"
 glam = "0.30.4"
 softbuffer = "0.4.6"
 tracing = "0.1.41"
