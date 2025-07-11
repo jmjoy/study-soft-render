@@ -114,6 +114,18 @@ impl Rasterizer3D {
         }
     }
 
+    // 调整大小
+    fn resize(&mut self, width: u32, height: u32) {
+        self.width = width;
+        self.height = height;
+        self.camera.aspect = if height > 0 {
+            width as f32 / height as f32
+        } else {
+            1.0
+        };
+        self.depth_buffer = vec![1.0; (width * height) as usize];
+    }
+
     // 顶点着色器：变换顶点到裁剪空间
     fn vertex_shader(&self, vertex: &Vertex3D, mvp: Mat4) -> TransformedVertex {
         let world_pos = Vec4::new(vertex.position.x, vertex.position.y, vertex.position.z, 1.0);
@@ -325,7 +337,7 @@ impl ApplicationHandler for App {
             .create_window(
                 Window::default_attributes()
                     .with_title("3D Rasterizer - MVP Transform Demo")
-                    .with_resizable(false)
+                    .with_resizable(true)
                     .with_inner_size(PhysicalSize {
                         width: 800,
                         height: 600,
@@ -431,6 +443,17 @@ impl ApplicationHandler for App {
             } if window.id() == id => {
                 info!("The close button or escape key was pressed; stopping");
                 event_loop.exit();
+            }
+            WindowEvent::Resized(size) if window.id() == id => {
+                let PhysicalSize { width, height } = size;
+                info!(width, height, "window resized");
+                if let (Some(w), Some(h)) = (NonZeroU32::new(width), NonZeroU32::new(height)) {
+                    surface.resize(w, h).unwrap();
+                    if let Some(rasterizer) = &mut self.rasterizer {
+                        rasterizer.resize(width, height);
+                    }
+                    window.request_redraw();
+                }
             }
             WindowEvent::RedrawRequested if window.id() == id => {
                 // 计算时间
